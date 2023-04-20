@@ -16,9 +16,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class PhongLichKey implements Serializable {
-    @Column(name = "phong_id")
-    private Long phong_id;
-    @Column(name = "lich_id")
-    private Long lich_id;
+public class DiemDanhId implements Serializable {
+    @Column(name = "loptinchingay_id")
+    private LopTinChiNgayId loptinchingay_id;
+    @Column(name = "sinhvien_id")
+    private Long sinhvien_id;
 }

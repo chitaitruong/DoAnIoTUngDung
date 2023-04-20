@@ -2,7 +2,7 @@ package com.example.attendance_system.payload.request;
 
 import javax.validation.constraints.NotBlank;
 
-public class LoginRequest {
+public class SignInRequest {
 	@NotBlank
 	private String username;
 

@@ -5,8 +5,6 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -20,24 +18,26 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "sinhvien")
+@Table(name = "giangvien")
 @Getter
 @Setter
 @NoArgsConstructor
-public class SinhVien extends User {
+public class GiangVien extends User {
     // @OneToMany(mappedBy = "sinhvien")
     // private Set<DiemDanh> danhsach_diemdanh;
-    public SinhVien(@Size(max = 20) String username, @Size(max = 120) String password, String hoten,
+    @OneToMany(mappedBy = "giangvien")
+    @JsonIgnore
+    private Set<Lop> ds_lop;
+    @OneToMany(mappedBy = "giangvien")
+    @JsonIgnore
+    private Set<LopTinChi> ds_loptinchi;
+    @ManyToOne
+    @JoinColumn(name="khoa_id", nullable=true)
+    @JsonIgnore
+    private Khoa khoa;
+    public GiangVien(@Size(max = 20) String username, @Size(max = 120) String password, String hoten,
             @Size(max = 50) @Email String email, String phone, Date ngaysinh, String address) {
         super(username, password, hoten, email, phone, ngaysinh, address);
     }
-    @ManyToMany(mappedBy = "ds_sinhvien")
-    @JsonIgnore
-    private Set<LopTinChi> ds_loptinchidk;
-    @OneToMany(mappedBy = "sinhvien")
-    @JsonIgnore
-    private Set<DiemDanh> ds_diemdanh;
-    @ManyToOne
-    @JoinColumn(name="lop_id", nullable=true)
-    private Lop lop;
+    
 }

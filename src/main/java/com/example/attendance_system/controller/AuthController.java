@@ -1,5 +1,8 @@
 package com.example.attendance_system.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,17 +22,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.attendance_system.entities.ERole;
+import com.example.attendance_system.entities.GiangVien;
 import com.example.attendance_system.entities.RefreshToken;
 import com.example.attendance_system.entities.Role;
+import com.example.attendance_system.entities.SinhVien;
 import com.example.attendance_system.entities.User;
 import com.example.attendance_system.exception.TokenRefreshException;
-import com.example.attendance_system.payload.request.LoginRequest;
+import com.example.attendance_system.payload.request.SignInRequest;
 import com.example.attendance_system.payload.request.SignupRequest;
 import com.example.attendance_system.payload.request.TokenRefreshRequest;
 import com.example.attendance_system.payload.response.JwtResponse;
 import com.example.attendance_system.payload.response.MessageResponse;
 import com.example.attendance_system.payload.response.TokenRefreshResponse;
+import com.example.attendance_system.repository.GiangVienRepository;
 import com.example.attendance_system.repository.RoleRepository;
+import com.example.attendance_system.repository.SinhVienRepository;
 import com.example.attendance_system.repository.UserRepository;
 import com.example.attendance_system.security.jwt.JwtUtils;
 import com.example.attendance_system.security.services.RefreshTokenService;
@@ -49,6 +56,12 @@ public class AuthController {
   UserRepository userRepository;
 
   @Autowired
+  GiangVienRepository giangVienRepository;
+
+  @Autowired
+  SinhVienRepository sinhVienRepository;
+
+  @Autowired
   RoleRepository roleRepository;
 
   @Autowired
@@ -61,7 +74,7 @@ public class AuthController {
   RefreshTokenService refreshTokenService;
 
   @PostMapping("/signin")
-  public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+  public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest loginRequest) {
 
     Authentication authentication = authenticationManager
         .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -91,10 +104,27 @@ public class AuthController {
       return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
     }
 
-    // Create new user's account
-    User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
-        encoder.encode(signUpRequest.getPassword()));
+    if (userRepository.existsByPhone(signUpRequest.getPhone())) {
+      return ResponseEntity.badRequest().body(new MessageResponse("Error: Phone is already in use!"));
+    }
 
+    User user;
+    // Create new user's account
+    Date ngaysinh = null;
+    try {
+      ngaysinh = new SimpleDateFormat("dd/MM/yyyy").parse(signUpRequest.getNgaysinh());
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    if (signUpRequest.getIsGiangVien()) {
+      user = new GiangVien(signUpRequest.getUsername(),
+      encoder.encode(signUpRequest.getPassword()), signUpRequest.getHoten(), signUpRequest.getEmail(), signUpRequest.getPhone(), ngaysinh, signUpRequest.getAddress());
+    } else {
+      user = new SinhVien(signUpRequest.getUsername(), 
+      encoder.encode(signUpRequest.getPassword()), signUpRequest.getHoten(), signUpRequest.getEmail(), signUpRequest.getPhone(), ngaysinh, signUpRequest.getAddress());
+    }
+    
     Set<String> strRoles = signUpRequest.getRole();
     Set<Role> roles = new HashSet<>();
 
@@ -124,9 +154,12 @@ public class AuthController {
         }
       });
     }
-
     user.setRoles(roles);
-    userRepository.save(user);
+    if (signUpRequest.getIsGiangVien()) {
+      giangVienRepository.save((GiangVien)user);
+    } else {
+      sinhVienRepository.save((SinhVien)user);
+    }
 
     return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
   }
