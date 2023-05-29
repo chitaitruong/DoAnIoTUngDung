@@ -23,4 +23,6 @@ public class TaoLopTinChiRequest {
     private Long hocky_id;
     private Long monhoc_id;
     private Long phong_id;
+    private String ngay_bd;
+    private String ngay_kt;
 }

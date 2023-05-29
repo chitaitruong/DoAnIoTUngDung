@@ -1,6 +1,7 @@
 package com.example.attendance_system.entities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,6 +44,10 @@ public class LopTinChi {
     private Long tiet_bd;
     @Column(name = "so_tiet", nullable = false)
     private Long so_tiet;
+    @Column(name = "ngay_bd", nullable = false)
+    private Date ngay_bd;
+    @Column(name = "ngay_kt", nullable = false)
+    private Date ngay_kt;
     @ManyToMany
     @JoinTable(name = "loptinchi_lop", joinColumns = @JoinColumn(name = "loptinchi_id"), inverseJoinColumns = @JoinColumn(name = "lop_id"))
     @JsonIgnore
@@ -71,7 +76,7 @@ public class LopTinChi {
     @JsonIgnore
     private Set<LopTinChiNgay> ds_loptinchingay = new HashSet<>();
     public LopTinChi(Long sl_sinhvien, String thu, Long tiet_bd, Long so_tiet, Set<Lop> ds_lop, MonHoc monhoc,
-            HocKy hocky, Phong phong, GiangVien giangvien) {
+            HocKy hocky, Phong phong, GiangVien giangvien, Date ngay_bd, Date ngay_kt) {
         this.sl_sinhvien = sl_sinhvien;
         this.thu = thu;
         this.tiet_bd = tiet_bd;
@@ -81,6 +86,8 @@ public class LopTinChi {
         this.hocky = hocky;
         this.phong = phong;
         this.giangvien = giangvien;
+        this.ngay_bd = ngay_bd;
+        this.ngay_kt = ngay_kt;
     }
     
 }

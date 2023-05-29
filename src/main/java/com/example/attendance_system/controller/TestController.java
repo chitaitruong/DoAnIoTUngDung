@@ -169,7 +169,7 @@ public class TestController {
             String thu = taoLopTinChiRequest.getThu();
             Set<Lop> ds_lop = new HashSet<>(lopRepository.findAllById(taoLopTinChiRequest.getDs_idlop()));
             Set<String> ds_ngay = taoLopTinChiRequest.getDs_ngay();
-            LopTinChi loptinchi = lopTinChiRepository.save(new LopTinChi(sl_sv,thu,tiet_bd,so_tiet,ds_lop,monhoc,hocky,phong,giangvien));
+            LopTinChi loptinchi = lopTinChiRepository.save(new LopTinChi(sl_sv,thu,tiet_bd,so_tiet,ds_lop,monhoc,hocky,phong,giangvien, new SimpleDateFormat("dd/MM/yyyy").parse(taoLopTinChiRequest.getNgay_bd()), new SimpleDateFormat("dd/MM/yyyy").parse(taoLopTinChiRequest.getNgay_kt())));
             Ngay _ngay;
             for (String tam :ds_ngay) {
                 Date ngay = new SimpleDateFormat("dd/MM/yyyy").parse(tam);
@@ -265,12 +265,12 @@ public class TestController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PostMapping("/diemdanh")
+    @PostMapping("/sinhvien/diemdanh")
     public ResponseEntity<?> getLichByLopTinChiId(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt, @RequestBody SinhVien sinhVien) {
         try {
             Optional<SinhVien> sv = sinhVienRepository.findById(sinhVien.getId());
             if (!sv.isPresent()) {
-                return ResponseEntity.ok(new MessageResponse("Id khong ton tai trong he thong"));
+                return ResponseEntity.ok(new MessageResponse("ID NO EXIST"));
             }
             SinhVien _sinhVien = sv.get();
             Long trangThai = 1L;
@@ -306,13 +306,13 @@ public class TestController {
             Long ngayId = _ngay.getId();
             IDiemDanhSinhVien tam = diemDanhRepository.findDiemDanh(ngayId, _sinhVien.getId(), 1L);
             if (tam == null ) {
-                return ResponseEntity.ok(new MessageResponse("Ban khong co lich hoc luc nay!"));
+                return ResponseEntity.ok(new MessageResponse("NO SCHEDULE NOW"));
             }
             DiemDanh diemDanh = new DiemDanh();
             LopTinChiNgayId lopTinChiNgayId = new LopTinChiNgayId(tam.getId(),ngayId);
             DiemDanhId diemDanhId = new DiemDanhId(lopTinChiNgayId, _sinhVien.getId());
             if (diemDanhRepository.existsById(diemDanhId)) 
-                return ResponseEntity.ok(new MessageResponse("Ban da diem danh roi!"));
+                return ResponseEntity.ok(new MessageResponse("ATTENDANCED"));
             diemDanh.setId(diemDanhId);
             LopTinChiNgay lopTinChiNgay = lopTinChiNgayRepository.findById(lopTinChiNgayId).get();
             diemDanh.setLoptinchingay(lopTinChiNgay);
@@ -322,24 +322,33 @@ public class TestController {
             diemDanh.setThoi_gian_cap_nhat(LocalDateTime.now());
             diemDanh.setThoi_gian_quet_van_tay(LocalDateTime.now());
             DiemDanh dd = diemDanhRepository.save(diemDanh);
-            return new ResponseEntity<>(dd, HttpStatus.CREATED);
+            return ResponseEntity.ok(new MessageResponse("Welcome"));
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.ok(new MessageResponse("Server Error"));
         }
     }
     @PutMapping("/giangvien/diemdanh")
     public ResponseEntity<?> updateDiemDanh(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt, @RequestBody UpdateDiemDanhRequest updateDiemDanhRequest) {
         try {
-            Optional<DiemDanh> dd = diemDanhRepository.findById(new DiemDanhId(new LopTinChiNgayId(updateDiemDanhRequest.getLoptinchi_id(), updateDiemDanhRequest.getNgay_id()), updateDiemDanhRequest.getSinhvien_id()));
-            if (!dd.isPresent())
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            DiemDanh _diemDanh = dd.get();
+            DiemDanh _diemDanh = new DiemDanh();
+            LopTinChiNgay ltcn = lopTinChiNgayRepository.findById(new LopTinChiNgayId(updateDiemDanhRequest.getLoptinchi_id(), updateDiemDanhRequest.getNgay_id())).get();
+            Optional<DiemDanh> dd = diemDanhRepository.findById(new DiemDanhId(ltcn.getId(), updateDiemDanhRequest.getSinhvien_id()));
+            Optional<SinhVien> sv = sinhVienRepository.findById(updateDiemDanhRequest.getSinhvien_id());
+            if (dd.isPresent()) {
+                _diemDanh = dd.get();
+            } else {
+                _diemDanh.setId(new DiemDanhId(ltcn.getId(), updateDiemDanhRequest.getSinhvien_id()));
+            }
+            _diemDanh.setLoptinchingay(ltcn);
+            _diemDanh.setSinhvien(sv.get());
             _diemDanh.setGhi_chu(updateDiemDanhRequest.getGhi_chu());
             _diemDanh.setThoi_gian_cap_nhat(LocalDateTime.now());
+            _diemDanh.setThoi_gian_quet_van_tay(LocalDateTime.now());
             _diemDanh.setTrang_thai(updateDiemDanhRequest.getTrang_thai());
             return new ResponseEntity<>(diemDanhRepository.save(_diemDanh), HttpStatus.OK);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
