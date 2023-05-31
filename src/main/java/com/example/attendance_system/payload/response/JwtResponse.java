@@ -9,15 +9,39 @@ public class JwtResponse {
 	private Long id;
 	private String username;
 	private String email;
+	private String hoten;
+	private Boolean isactive;
 	private List<String> roles;
+	private String phone;
+	private String diachi;
 
-	public JwtResponse(String accessToken, String refreshToken, Long id, String username, String email, List<String> roles) {
+	public JwtResponse(String accessToken, String refreshToken, Long id, String username, String email, List<String> roles, String hoten, Boolean isactive, String phone, String diachi) {
 		this.token = accessToken;
 		this.refreshToken = refreshToken;
 		this.id = id;
 		this.username = username;
 		this.email = email;
 		this.roles = roles;
+		this.hoten = hoten;
+		this.isactive = isactive;
+		this.phone = phone;
+		this.diachi = diachi;
+	}
+	
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getDiachi() {
+		return diachi;
+	}
+
+	public void setDiachi(String diachi) {
+		this.diachi = diachi;
 	}
 
 	public String getAccessToken() {
@@ -30,6 +54,22 @@ public class JwtResponse {
 
 	public String getTokenType() {
 		return type;
+	}
+
+	public String getHoten() {
+		return hoten;
+	}
+
+	public void setHoten(String hoten) {
+		this.hoten = hoten;
+	}
+
+	public Boolean getIsactive() {
+		return isactive;
+	}
+
+	public void setIsactive(Boolean isactive) {
+		this.isactive = isactive;
 	}
 
 	public void setTokenType(String tokenType) {

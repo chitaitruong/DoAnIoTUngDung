@@ -17,6 +17,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,8 +47,10 @@ public class LopTinChi {
     @Column(name = "so_tiet", nullable = false)
     private Long so_tiet;
     @Column(name = "ngay_bd", nullable = false)
+    @Temporal(TemporalType.DATE)
     private Date ngay_bd;
     @Column(name = "ngay_kt", nullable = false)
+    @Temporal(TemporalType.DATE)
     private Date ngay_kt;
     @ManyToMany
     @JoinTable(name = "loptinchi_lop", joinColumns = @JoinColumn(name = "loptinchi_id"), inverseJoinColumns = @JoinColumn(name = "lop_id"))

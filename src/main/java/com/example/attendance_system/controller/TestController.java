@@ -298,8 +298,8 @@ public class TestController {
                 }
             }
             Ngay _ngay = new Ngay();//new SimpleDateFormat("dd/MM/yyyy").parse("12/03/2023")
-            if (ngayRepository.findByNgay(new SimpleDateFormat("dd/MM/yyyy").parse("12/03/2023")).isPresent()) {
-                _ngay = ngayRepository.findByNgay(new SimpleDateFormat("dd/MM/yyyy").parse("12/03/2023")).get();
+            if (ngayRepository.findByNgay(new SimpleDateFormat("dd/MM/yyyy").parse("16/03/2023")).isPresent()) {
+                _ngay = ngayRepository.findByNgay(new SimpleDateFormat("dd/MM/yyyy").parse("16/03/2023")).get();
             } else {
                 return ResponseEntity.ok(new MessageResponse("ATTENDANCE TIMEOUT"));
             }

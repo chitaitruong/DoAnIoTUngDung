@@ -1,5 +1,6 @@
 package com.example.attendance_system.entities;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -28,8 +29,8 @@ public class SinhVien extends User {
     // @OneToMany(mappedBy = "sinhvien")
     // private Set<DiemDanh> danhsach_diemdanh;
     public SinhVien(@Size(max = 20) String username, @Size(max = 120) String password, String hoten,
-            @Size(max = 50) @Email String email, String phone, Date ngaysinh, String address) {
-        super(username, password, hoten, email, phone, ngaysinh, address);
+            @Size(max = 50) @Email String email, String phone, Date ngaysinh, String address, String otp, LocalDateTime exp_otp) {
+        super(username, password, hoten, email, phone, ngaysinh, address, otp, exp_otp);
     }
     @ManyToMany(mappedBy = "ds_sinhvien")
     @JsonIgnore

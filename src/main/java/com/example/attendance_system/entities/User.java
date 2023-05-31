@@ -1,5 +1,6 @@
 package com.example.attendance_system.entities;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -55,6 +56,12 @@ public abstract class User {
 	protected Date ngaysinh;
 	@Column(name = "address", nullable = false)
 	protected String address;
+	@Column(name = "isactive", nullable = false)
+	protected Boolean isactive = false;
+	@Column(name = "otp", nullable = false)
+	protected String otp;
+	@Column(name = "exp_otp", nullable = false)
+	protected LocalDateTime exp_otp;
 	// @ManyToMany
     // @JoinTable(name = "lop_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "lop_id"))
     // private Set<Lop> ds_lop;
@@ -65,7 +72,7 @@ public abstract class User {
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles;
 	public User(@Size(max = 20) String username, @Size(max = 120) String password, String hoten,
-			@Size(max = 50) @Email String email, String phone, Date ngaysinh, String address) {
+			@Size(max = 50) @Email String email, String phone, Date ngaysinh, String address, String otp, LocalDateTime exp_otp) {
 		this.username = username;
 		this.password = password;
 		this.hoten = hoten;
@@ -73,6 +80,8 @@ public abstract class User {
 		this.phone = phone;
 		this.ngaysinh = ngaysinh;
 		this.address = address;
+		this.otp = otp;
+		this.exp_otp = exp_otp;
 	}
 	
 }
